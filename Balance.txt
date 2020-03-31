@@ -1,0 +1,37 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Balances each dataset by duplicating each game a certain number
+# of times until the ratio of wins to losses is roughly 1:1. This is
+# achieved by duplicating all 192 winning games by 15, and duplicating
+# all 151 losing games by 19.
+
+df = pd.read_csv("../data/ranked-1.csv")
+
+wins = np.zeros((192, 42))
+losses = np.zeros((151, 42))
+
+winCount = 0
+lossCount = 0
+
+#only first 343 rows
+for row in range(0, 343):
+    if int(df.values[row][41]) == 1:
+        wins[winCount] = df.values[row]
+        winCount += 1
+    else:
+        losses[lossCount] = df.values[row]
+        lossCount += 1
+
+wins = np.repeat(wins, 15, axis=0)
+losses = np.repeat(losses, 19, axis=0)
+
+both = np.concatenate((wins, losses))
+
+df2 = pd.DataFrame(both, columns=df.columns)
+print(df2)
+df2.to_csv("../data/balanced1LogAbsolute.csv", index=False)
+
+#wins * 15
+#losses * 19
